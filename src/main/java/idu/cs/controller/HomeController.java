@@ -27,7 +27,7 @@ public class HomeController {
 	@GetMapping("/register")
 	public String getRegForm(Model model) {
 		return "form";
-	}
+	} 
 	@GetMapping("/users")
 	public String getAllUser(Model model) {
 		model.addAttribute("users", userRepo.findAll());
