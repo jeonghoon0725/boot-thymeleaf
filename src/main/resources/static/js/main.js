@@ -29,7 +29,7 @@ function fire_ajax_submit() {
         success: function (formArray) {
         	console.log("SUCCESS : ", formArray);
         	window.location.href = "/users";
-        	
+        	//get 방식
         },
         error: function (e) {
         	console.log("ERROR : ", e);        	
