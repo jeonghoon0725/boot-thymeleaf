@@ -4,7 +4,7 @@ $(document).ready(function () {
         //stop submit the form, we will post it manually.
         event.preventDefault();
 
-        fire_ajax_submit();
+        fire_ajax_submit();//밑에 있는 함수로 보냄
     });
 
 });

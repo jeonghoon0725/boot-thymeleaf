@@ -2,6 +2,7 @@ package idu.cs.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -18,30 +19,57 @@ import idu.cs.domain.User;
 import idu.cs.exception.ResourceNotFoundException;
 import idu.cs.repository.UserRepository;
 
-@Controller
-public class HomeController {
+@Controller 
+// Spring Framework에게 이 클래스로부터 작성된 객체는 Controller 역할을 함을 알려줌
+// Spring 이 이 클래스로 부터 Bean 객체를 생성해서 등록할 수 있음
+public class UserController {
 	@Autowired UserRepository userRepo; // Dependency Injection
-	//
-	
-	@GetMapping("/")
+
+	@GetMapping("/")	//첫 화면
 	public String home(Model model) {
 		return "index";
 	}
-	@GetMapping("/user-reg-form")
+	@GetMapping("/user-login-form")		//로그인
+	public String getLoginForm(Model model) {
+		return "login";
+	}
+	@PostMapping("/login")		//로그인
+	public String loginUser(@Valid User user, HttpSession session ) {
+		System.out.println("login process : " + user.getUserId());
+		User sessionUser = userRepo.findByUserId(user.getUserId());
+		if(sessionUser == null) {
+			System.out.println("id error : ");
+			return "redirect:/user-login-form";
+		}
+		if(!sessionUser.getUserPw().equals(user.getUserPw())) {
+			System.out.println("pw error : ");
+			return "redirect:/uesr-login-form";
+		}
+		session.setAttribute("user", sessionUser);
+		return "redirect:/";
+	}
+	@GetMapping("/user-register-form")		//회원가입
 	public String getRegForm(Model model) {
-		return "form";
-	} 
-	@GetMapping("/users")
+		return "register";
+	}
+	@GetMapping("/users")					//회원목록 보기
 	public String getAllUser(Model model) {
 		model.addAttribute("users", userRepo.findAll());
 		return "userlist";
 	}
-	@PostMapping("/users")
-	public String createUser(@Valid @RequestBody User user, Model model) {
-		userRepo.save(user);
+	@PostMapping("/users")					//회원 등록
+	public String createUser(@Valid User user, Model model) {
+		if(userRepo.save(user) != null)
+			System.out.println("Database 등록 성공");
+		else 
+			System.out.println("Database 등록 실패");
+			
 		model.addAttribute("users", userRepo.findAll());
 		return "redirect:/users";
 	}
+	
+	
+	
 	@GetMapping("/users/{id}")
 	public String getUserById(@PathVariable(value = "id") Long userId, Model model)	throws ResourceNotFoundException {
 		User user = userRepo.findById(userId).get();//.orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
