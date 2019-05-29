@@ -25,8 +25,6 @@ public class HomeController {
 	
 	@GetMapping("/")
 	public String home(Model model) {
-		model.addAttribute("test", "인덕 컴소");
-		model.addAttribute("egy", "유응구");
 		return "index";
 	}
 	@GetMapping("/user-reg-form")
@@ -40,14 +38,12 @@ public class HomeController {
 	}
 	@PostMapping("/users")
 	public String createUser(@Valid @RequestBody User user, Model model) {
-
 		userRepo.save(user);
 		model.addAttribute("users", userRepo.findAll());
 		return "redirect:/users";
 	}
 	@GetMapping("/users/{id}")
-	public String getUserById(@PathVariable(value = "id") Long userId, Model model)
-			throws ResourceNotFoundException {
+	public String getUserById(@PathVariable(value = "id") Long userId, Model model)	throws ResourceNotFoundException {
 		User user = userRepo.findById(userId).get();//.orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
 		model.addAttribute("user", user);
 		return "user";
@@ -62,8 +58,7 @@ public class HomeController {
 		//return ResponseEntity.ok().body(user);
 	}
 	@PutMapping("/users/{id}") //@PatchMapping 수정한 부분만 업데이트시킬 수 있는 매핑
-	public String updateUser(@PathVariable(value = "id") Long userId, 
-			@Valid User userDetails, Model model) {
+	public String updateUser(@PathVariable(value = "id") Long userId, @Valid User userDetails, Model model) {
 		User user = userRepo.findById(userId).get();//DB로 부터 읽어온 객체
 		user.setName(userDetails.getName());// userDetails는 전송한 객체
 		user.setCompany(userDetails.getCompany());
