@@ -19,7 +19,7 @@ import idu.cs.domain.User;
 import idu.cs.exception.ResourceNotFoundException;
 import idu.cs.repository.UserRepository;
 
-@Controller 
+@Controller //@Component 가장 일반적, @Service, @Repository
 // Spring Framework에게 이 클래스로부터 작성된 객체는 Controller 역할을 함을 알려줌
 // Spring 이 이 클래스로 부터 Bean 객체를 생성해서 등록할 수 있음
 public class UserController {
@@ -48,6 +48,12 @@ public class UserController {
 		session.setAttribute("user", sessionUser);
 		return "redirect:/";
 	}
+	@GetMapping("/logout")
+	public String logoutUser(HttpSession session) {
+		session.removeAttribute("user");
+		//session.invalidate();  세션에 남아있는 모든 데이터를 삭제
+		return "redirect:/";
+	}
 	@GetMapping("/user-register-form")		//회원가입
 	public String getRegForm(Model model) {
 		return "register";
@@ -67,6 +73,8 @@ public class UserController {
 		model.addAttribute("users", userRepo.findAll());
 		return "redirect:/users";
 	}
+	
+	
 	
 	
 	
