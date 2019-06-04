@@ -75,9 +75,25 @@ public class UserController {
 	}
 	
 	
+	@GetMapping("/users/{id}")
+	public String getUserById(@PathVariable(value = "id") Long userId, Model model, HttpSession session)	throws ResourceNotFoundException {
+		User user = userRepo.findById(userId).get();
+		model.addAttribute("user", user);
+		return "user";
+	}
+	@PutMapping("/users/{id}") //@PatchMapping 수정한 부분만 업데이트시킬 수 있는 매핑
+	public String updateUser(@PathVariable(value = "id") Long userId, @Valid User userDetails, HttpSession session) {
+		User user = userRepo.findById(userId).get();//DB로 부터 읽어온 객체
+		user.setUserId(userDetails.getUserId());
+		user.setUserPw(userDetails.getUserPw());
+		user.setName(userDetails.getName());// userDetails는 전송한 객체
+		user.setCompany(userDetails.getCompany());
+		userRepo.save(user);
+		return "redirect:/users"; //redirect는 페이지를 바꾼다.  users로 가겠다
+	}
 	
 	
-	
+	/* 
 	@GetMapping("/users/{id}")
 	public String getUserById(@PathVariable(value = "id") Long userId, Model model)	throws ResourceNotFoundException {
 		User user = userRepo.findById(userId).get();//.orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
@@ -108,4 +124,5 @@ public class UserController {
 		model.addAttribute("name", user.getName());
 		return "user-deleted";
 	}
+	*/
 }
